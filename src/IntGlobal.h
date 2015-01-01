@@ -1,8 +1,15 @@
 #pragma once
 
 #include <llvm/DebugInfo.h>
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Module.h>
 #include <llvm/Instructions.h>
+#else
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Instructions.h>
+#endif
+
 #include <llvm/ADT/DenseMap.h>
 #include <llvm/ADT/SmallPtrSet.h>
 #include <llvm/ADT/StringExtras.h>
@@ -24,7 +31,7 @@ typedef std::map<llvm::StringRef, llvm::Function *> FuncMap;
 typedef std::map<std::string, FuncSet> FuncPtrMap;
 typedef llvm::DenseMap<llvm::CallInst *, FuncSet> CalleeMap;
 typedef std::set<llvm::StringRef> DescSet;
-typedef std::map<std::string, CRange> RangeMap;
+typedef std::map<std::string, llvm::ConstantRange> RangeMap;
 
 
 class TaintMap {
@@ -169,17 +176,17 @@ class RangePass : public IterativeModulePass {
 private:
 	const unsigned MaxIterations;	
 	
-	bool safeUnion(CRange &CR, const CRange &R);
-	bool unionRange(llvm::StringRef, const CRange &, llvm::Value *);
-	bool unionRange(llvm::BasicBlock *, llvm::Value *, const CRange &);
-	CRange getRange(llvm::BasicBlock *, llvm::Value *);
+	bool safeUnion(llvm::ConstantRange &CR, const llvm::ConstantRange &R);
+	bool unionRange(llvm::StringRef, const llvm::ConstantRange &, llvm::Value *);
+	bool unionRange(llvm::BasicBlock *, llvm::Value *, const llvm::ConstantRange &);
+	llvm::ConstantRange getRange(llvm::BasicBlock *, llvm::Value *);
 
 	void collectInitializers(llvm::GlobalVariable *, llvm::Constant *);
 	bool updateRangeFor(llvm::Function *);
 	bool updateRangeFor(llvm::BasicBlock *);
 	bool updateRangeFor(llvm::Instruction *);
 
-	typedef std::map<llvm::Value *, CRange> ValueRangeMap;
+	typedef std::map<llvm::Value *, llvm::ConstantRange> ValueRangeMap;
 	typedef std::map<llvm::BasicBlock *, ValueRangeMap> FuncValueRangeMaps;
 	FuncValueRangeMaps FuncVRMs;
 
@@ -192,10 +199,10 @@ private:
 	
 	bool isBackEdge(const Edge &);
 	
-	CRange visitBinaryOp(llvm::BinaryOperator *);
-	CRange visitCastInst(llvm::CastInst *);
-	CRange visitSelectInst(llvm::SelectInst *);
-	CRange visitPHINode(llvm::PHINode *);
+	llvm::ConstantRange visitBinaryOp(llvm::BinaryOperator *);
+	llvm::ConstantRange visitCastInst(llvm::CastInst *);
+	llvm::ConstantRange visitSelectInst(llvm::SelectInst *);
+	llvm::ConstantRange visitPHINode(llvm::PHINode *);
 	
 	bool visitCallInst(llvm::CallInst *);
 	bool visitReturnInst(llvm::ReturnInst *);

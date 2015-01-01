@@ -1,10 +1,18 @@
 #include <llvm/DebugInfo.h>
 #include <llvm/Pass.h>
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Instructions.h>
-#include <llvm/Support/Debug.h>
-#include <llvm/Support/InstIterator.h>
 #include <llvm/Module.h>
 #include <llvm/Constants.h>
+#else
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Constants.h>
+#endif
+
+#include <llvm/Support/Debug.h>
+#include <llvm/Support/InstIterator.h>
 #include <llvm/ADT/StringExtras.h>
 #include <llvm/Analysis/CallGraph.h>
 

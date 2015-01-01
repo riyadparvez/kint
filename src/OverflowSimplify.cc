@@ -1,8 +1,16 @@
 #define DEBUG_TYPE "overflow-simplify"
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Constants.h>
-#include <llvm/IRBuilder.h>
 #include <llvm/Instructions.h>
 #include <llvm/IntrinsicInst.h>
+#else
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/IntrinsicInst.h>
+#endif
+
+#include <llvm/IRBuilder.h>
 #include <llvm/Pass.h>
 #include <llvm/ADT/APInt.h>
 #include <llvm/ADT/SmallString.h>

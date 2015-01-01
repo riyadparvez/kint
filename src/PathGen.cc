@@ -1,7 +1,14 @@
 #include "PathGen.h"
 #include "ValueGen.h"
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Constants.h>
 #include <llvm/Instructions.h>
+#else
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Instructions.h>
+#endif
+
 #include <llvm/Analysis/Dominators.h>
 #include <llvm/Support/CFG.h>
 

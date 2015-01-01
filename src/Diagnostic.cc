@@ -1,14 +1,23 @@
 #include "Diagnostic.h"
 #include "SMTSolver.h"
 #include <llvm/DebugInfo.h>
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Instruction.h>
 #include <llvm/BasicBlock.h>
 #include <llvm/Function.h>
+#include <llvm/Metadata.h>
+#else
+#include <llvm/IR/Instruction.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Metadata.h>
+#endif
+
 #include <llvm/ADT/SmallString.h>
 #include <llvm/ADT/SmallString.h>
 #include <llvm/Support/Path.h>
 #include <llvm/Support/raw_ostream.h>
-#include <llvm/Metadata.h>
 
 using namespace llvm;
 

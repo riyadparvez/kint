@@ -1,8 +1,17 @@
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Module.h>
 #include <llvm/Instructions.h>
 #include <llvm/IntrinsicInst.h>
 #include <llvm/Metadata.h>
 #include <llvm/Constants.h>
+#else
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/IntrinsicInst.h>
+#include <llvm/IR/Metadata.h>
+#include <llvm/IR/Constants.h>
+#endif
+
 #include <llvm/Pass.h>
 #include <llvm/Analysis/ValueTracking.h>
 #include <llvm/Support/InstIterator.h>

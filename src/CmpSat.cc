@@ -1,6 +1,14 @@
 #define DEBUG_TYPE "cmp-sat"
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/DataLayout.h>
 #include <llvm/Instructions.h>
+#else
+#include <llvm/IR/DataLayout.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/Analysis/CFG.h>
+#endif
+
 #include <llvm/Pass.h>
 #include <llvm/ADT/OwningPtr.h>
 #include <llvm/Analysis/Dominators.h>

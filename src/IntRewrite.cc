@@ -1,11 +1,21 @@
 #define DEBUG_TYPE "int-rewrite"
 #include <llvm/DataLayout.h>
 #include <llvm/IRBuilder.h>
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Instructions.h>
 #include <llvm/Intrinsics.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/Metadata.h>
 #include <llvm/Module.h>
+#else
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/Intrinsics.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Metadata.h>
+#include <llvm/IR/Module.h>
+#endif
+
 #include <llvm/Pass.h>
 #include <llvm/ADT/SmallPtrSet.h>
 #include <llvm/ADT/SmallVector.h>

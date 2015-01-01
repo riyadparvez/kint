@@ -1,8 +1,16 @@
 #include "ValueGen.h"
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Constants.h>
-#include <llvm/InstVisitor.h>
 #include <llvm/IntrinsicInst.h>
 #include <llvm/Operator.h>
+#else
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/IntrinsicInst.h>
+#include <llvm/IR/Operator.h>
+#endif
+
+#include <llvm/InstVisitor.h>
 #include <llvm/ADT/APInt.h>
 #include <llvm/Assembly/Writer.h>
 #include <llvm/Support/GetElementPtrTypeIterator.h>

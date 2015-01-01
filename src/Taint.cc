@@ -1,8 +1,16 @@
 #include <llvm/DebugInfo.h>
-#include <llvm/Module.h>
 #include <llvm/Pass.h>
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Constants.h>
 #include <llvm/Instructions.h>
+#include <llvm/Module.h>
+#else
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/Module.h>
+#endif
+
 #include <llvm/ADT/DenseMap.h>
 #include <llvm/ADT/SmallPtrSet.h>
 #include <llvm/ADT/StringExtras.h>

@@ -1,10 +1,21 @@
 #pragma once
 
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Module.h>
 #include <llvm/Type.h>
 #include <llvm/Instructions.h>
 #include <llvm/IntrinsicInst.h>
 #include <llvm/Metadata.h>
+#else
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/IntrinsicInst.h>
+#include <llvm/IR/Metadata.h>
+#endif
+
+#include <llvm/Pass.h>
 #include <llvm/Support/Path.h>
 #include <string>
 #include <llvm/Support/Debug.h>

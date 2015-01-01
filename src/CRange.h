@@ -3,50 +3,49 @@
 #include <llvm/Support/Debug.h>
 #include <llvm/Support/ConstantRange.h>
 
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 3
+#include <llvm/ADT/APInt.h>
+#include <llvm/Support/DataTypes.h>
+#endif
+
+#ifndef LLVM_HAS_RVALUE_REFERENCES
+#define LLVM_HAS_RVALUE_REFERENCES 1
+#endif
+
 // llvm::ConstantRange fixup.
-class CRange : public llvm::ConstantRange {
-	typedef llvm::APInt APInt;
-	typedef llvm::ConstantRange super;
+class CRange {
 public:
-	CRange(uint32_t BitWidth, bool isFullSet) : super(BitWidth, isFullSet) {}
-	// Constructors.
-	CRange(const super &CR) : super(CR) {}
-	CRange(const APInt &Value)
-		: super(Value) {}
-	CRange(const APInt &Lower, const APInt &Upper)
-		: super(Lower, Upper) {}
-	static CRange makeFullSet(uint32_t BitWidth) {
-		return CRange(BitWidth, true);
+    static llvm::ConstantRange makeFullSet(uint32_t BitWidth) {
+		return llvm::ConstantRange(BitWidth, true);
 	}
-	static CRange makeEmptySet(uint32_t BitWidth) {
-		return CRange(BitWidth, false);
+	static llvm::ConstantRange makeEmptySet(uint32_t BitWidth) {
+		return llvm::ConstantRange(BitWidth, false);
 	}
-	static CRange makeICmpRegion(unsigned Pred, const CRange &other) {
-		return super::makeICmpRegion(Pred, other);
+	
+    static llvm::ConstantRange makeICmpRegion(unsigned Pred, llvm::ConstantRange other) {
+		return llvm::ConstantRange::makeICmpRegion(Pred, other);
 	}
 
-	void match(const CRange &R) {
-		if (this->getBitWidth() != R.getBitWidth()) {
-			llvm::dbgs() << "warning: range " << *this << " " 
-				<< this->getBitWidth() << " and " << R << " "
+	static void match(llvm::ConstantRange& t, llvm::ConstantRange R) {
+		if (t.getBitWidth() != R.getBitWidth()) {
+			llvm::dbgs() << "warning: range " << t << " " 
+				<< t.getBitWidth() << " and " << R << " "
 				<< R.getBitWidth() << " unmatch\n";
-			*this = this->zextOrTrunc(R.getBitWidth());
+			t = t.zextOrTrunc(R.getBitWidth());
 		}
 	}
 
-	bool safeUnion(const CRange &R) {
-		CRange V = R, Old = *this;
-		V.match(*this);
-		*this = this->unionWith(V);
-		return Old != *this;
+    static bool safeUnion(llvm::ConstantRange &t, llvm::ConstantRange R) {
+        llvm::ConstantRange V = R, Old = t;
+		match(V, t);
+		t = t.unionWith(V);
+		return Old != t;
 	}
 
-
-	CRange sdiv(const CRange &RHS) const {
-		if (isEmptySet() || RHS.isEmptySet())
-			return makeEmptySet(getBitWidth());
+	static llvm::ConstantRange sdiv(llvm::ConstantRange LHS, llvm::ConstantRange RHS) {
+		if (LHS.isEmptySet() || RHS.isEmptySet())
+			return makeEmptySet(LHS.getBitWidth());
 		// FIXME: too conservative.
-		return makeFullSet(getBitWidth());
+		return makeFullSet(LHS.getBitWidth());
 	}
-
 };

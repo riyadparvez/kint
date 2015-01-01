@@ -1,6 +1,16 @@
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include "llvm/LLVMContext.h"
 #include "llvm/PassManager.h"
 #include "llvm/Module.h"
+#include "llvm/Support/IRReader.h"
+#else
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/PassManager.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IRReader/IRReader.h"
+#include <llvm/Support/SourceMgr.h>
+#endif
+
 #include "llvm/Analysis/Verifier.h"
 #include "llvm/Bitcode/ReaderWriter.h"
 #include "llvm/Support/CommandLine.h"
@@ -8,7 +18,7 @@
 #include "llvm/Support/PrettyStackTrace.h"
 #include "llvm/Support/ToolOutputFile.h"
 #include "llvm/Support/SystemUtils.h"
-#include "llvm/Support/IRReader.h"
+
 #include "llvm/Support/Signals.h"
 #include "llvm/Support/Path.h"
 #include <memory>
@@ -37,9 +47,14 @@ GlobalContext GlobalCtx;
 void doWriteback(Module *M, StringRef name)
 {
 	std::string err;
+    #if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 	OwningPtr<tool_output_file> out(
 		new tool_output_file(name.data(), err, raw_fd_ostream::F_Binary));
-	if (!err.empty()) {
+    #else
+	OwningPtr<tool_output_file> out(
+        new tool_output_file(name.data(), err, sys::fs::F_Binary));
+    #endif
+    if (!err.empty()) {
 		Diag << "Cannot write back to " << name << ": " << err << "\n";
 		return;
 	}

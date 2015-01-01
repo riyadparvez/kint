@@ -3,12 +3,24 @@
 #include "PathGen.h"
 #include "SMTSolver.h"
 #include "ValueGen.h"
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/BasicBlock.h>
 #include <llvm/Constants.h>
 #include <llvm/Instructions.h>
 #include <llvm/Function.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/Module.h>
+#else
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/Analysis/CFG.h>
+#endif
+
 #include <llvm/Pass.h>
 #include <llvm/Assembly/Writer.h>
 #include <llvm/ADT/OwningPtr.h>

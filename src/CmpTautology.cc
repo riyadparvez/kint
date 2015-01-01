@@ -1,5 +1,11 @@
 #define DEBUG_TYPE "cmp-tautology"
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Instructions.h>
+#else
+#include <llvm/IR/Instructions.h>
+#endif
+
 #include <llvm/Pass.h>
 #include <llvm/Analysis/ScalarEvolution.h>
 #include <llvm/Analysis/ScalarEvolutionExpressions.h>

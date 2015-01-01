@@ -1,7 +1,14 @@
 #define DEBUG_TYPE "int-libcalls"
 #include <llvm/IRBuilder.h>
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR < 2
 #include <llvm/Instructions.h>
 #include <llvm/Module.h>
+#else
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/Module.h>
+#endif
+
 #include <llvm/Pass.h>
 #include <llvm/Support/InstIterator.h>
 
