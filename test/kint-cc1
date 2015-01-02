@@ -17,6 +17,12 @@ def cc(llvmcc, src, argv):
 	argv = [x for x in argv if x not in ['-pg', '-fprofile-arcs', '-ftest-coverage']]
 	# Remove warning flags.
 	argv = [x for x in argv if not x.startswith('-W')]
+	# Remove optimization flags not necessary for program analysis
+	argv = [x for x in argv if not x.startswith('-f')]
+	# Remove architecture specific flags not necessary for program analysis
+	argv = [x for x in argv if not x.startswith('-m')]
+	# Add flags to turn off clang unknown flags errors
+	argv.append('-Wno-error=unused-command-line-argument')
 	# Linux kernel hack: disable asm goto.
 	argv = [x for x in argv if x != '-DCC_HAVE_ASM_GOTO']
 	# Use -fstrict-overflow to distinguish signed/unsigned integers.

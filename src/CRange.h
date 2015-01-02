@@ -26,20 +26,20 @@ public:
 		return llvm::ConstantRange::makeICmpRegion(Pred, other);
 	}
 
-	static void match(llvm::ConstantRange& t, llvm::ConstantRange R) {
-		if (t.getBitWidth() != R.getBitWidth()) {
-			llvm::dbgs() << "warning: range " << t << " " 
-				<< t.getBitWidth() << " and " << R << " "
+	static void match(llvm::ConstantRange &L, llvm::ConstantRange R) {
+		if (L.getBitWidth() != R.getBitWidth()) {
+			llvm::dbgs() << "warning: range " << L << " " 
+				<< L.getBitWidth() << " and " << R << " "
 				<< R.getBitWidth() << " unmatch\n";
-			t = t.zextOrTrunc(R.getBitWidth());
+			L = L.zextOrTrunc(R.getBitWidth());
 		}
 	}
 
-    static bool safeUnion(llvm::ConstantRange &t, llvm::ConstantRange R) {
-        llvm::ConstantRange V = R, Old = t;
-		match(V, t);
-		t = t.unionWith(V);
-		return Old != t;
+    static bool safeUnion(llvm::ConstantRange &L, llvm::ConstantRange R) {
+        llvm::ConstantRange V = R, Old = L;
+		match(V, L);
+		L = L.unionWith(V);
+		return Old != L;
 	}
 
 	static llvm::ConstantRange sdiv(llvm::ConstantRange LHS, llvm::ConstantRange RHS) {
