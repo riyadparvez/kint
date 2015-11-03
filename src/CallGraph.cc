@@ -21,7 +21,7 @@
 
 using namespace llvm;
 
-// collect function pointer assignments in global initializers
+// Collect function pointer assignments in global initializers
 void
 CallGraphPass::processInitializers(Module *M, Constant *I, GlobalValue *V) {
 	// structs

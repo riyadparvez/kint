@@ -84,7 +84,7 @@ ConstantRange RangePass::getRange(BasicBlock *BB, Value *V)
 {
 	// constants
 	if (ConstantInt *C = dyn_cast<ConstantInt>(V)) {
-        ConstantRange cr(C->getValue().getBitWidth(), C->getValue().getZExtValue());
+        ConstantRange cr(C->getValue().getBitWidth(), C->getValue().getSExtValue());
         return cr;
     }
 	ValueRangeMap &VRM = FuncVRMs[BB];
@@ -144,7 +144,7 @@ void RangePass::collectInitializers(GlobalVariable *GV, Constant *I)
 {	
 	// global var
 	if (ConstantInt *CI = dyn_cast<ConstantInt>(I)) {
-		ConstantRange cr(CI->getValue().getBitWidth(), CI->getValue().getZExtValue());
+		ConstantRange cr(CI->getValue().getBitWidth(), CI->getValue().getSExtValue());
 		unionRange(getVarId(GV), cr, GV);
 	}
 	
@@ -168,7 +168,7 @@ void RangePass::collectInitializers(GlobalVariable *GV, Constant *I)
 					dyn_cast<ConstantInt>(I->getOperand(i));
 				StringRef sID = getStructId(ST, GV->getParent(), i);
 				if (!sID.empty() && CI) {
-                    ConstantRange cr(CI->getValue().getBitWidth(), CI->getValue().getZExtValue());
+                    ConstantRange cr(CI->getValue().getBitWidth(), CI->getValue().getSExtValue());
                     unionRange(sID, cr, GV);
 			    }
             }
@@ -415,7 +415,7 @@ void RangePass::visitSwitchInst(SwitchInst *SI, BasicBlock *BB,
 		for (SwitchInst::CaseIt i = SI->case_begin(), e = SI->case_end();
 			 i != e; ++i) {
 			if (i.getCaseSuccessor() == BB) {
-				ConstantRange cr(i.getCaseValue()->getValue().getBitWidth(), i.getCaseValue()->getValue().getZExtValue());
+				ConstantRange cr(i.getCaseValue()->getValue().getBitWidth(), i.getCaseValue()->getValue().getSExtValue());
 				CRange::safeUnion(CR, cr);
             }
 		}
@@ -423,7 +423,7 @@ void RangePass::visitSwitchInst(SwitchInst *SI, BasicBlock *BB,
 		// default case
 		for (SwitchInst::CaseIt i = SI->case_begin(), e = SI->case_end();
 			 i != e; ++i) {
-            ConstantRange cr(i.getCaseValue()->getValue().getBitWidth(), i.getCaseValue()->getValue().getZExtValue());
+            ConstantRange cr(i.getCaseValue()->getValue().getBitWidth(), i.getCaseValue()->getValue().getSExtValue());
 			CRange::safeUnion(CR, cr);
         }
 		CR = CR.inverse();
